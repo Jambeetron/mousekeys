@@ -1,0 +1,29 @@
+[Unit]
+Description=Mouse Keys (WM-independent numpad-as-mouse daemon)
+Documentation=man:mousekeys(1)
+# Best-effort ordering: start once the user's graphical session is up.
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+# Built binary is installed to ~/.local/bin by `make install`.
+ExecStart=%h/.local/bin/mousekeys
+# Clean lifecycle: restart on crash so the keyboard never stays grabbed.
+Restart=on-failure
+RestartSec=1
+# Hardening. We need /dev/input and /dev/uinput, so we cannot hide /dev.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=no
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictAddressFamilies=AF_UNIX
+# Keep only the syscalls the daemon uses: epoll/poll/read/write/ioctl,
+# basic file and process ops. Drop privileged/clock/module/mount/swap.
+SystemCallFilter=~@privileged @clock @module @swap @mount @cpu-emulation @raw-io @obsolete
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=graphical-session.target

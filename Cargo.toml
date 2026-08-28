@@ -1,0 +1,28 @@
+[package]
+name = "mousekeys"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "AGPL-3.0-or-later"
+description = "WM-independent Mouse Keys: drive the mouse with the numpad"
+publish = false
+
+[[bin]]
+name = "mousekeys"
+path = "src/main.rs"
+
+[dependencies]
+evdev = "0.13.2"
+nix = { version = "0.31.3", default-features = false, features = ["fs", "poll", "signal", "process", "user"] }
+anyhow = "1.0.104"
+thiserror = "2.0.19"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3", default-features = false, features = ["std", "env-filter", "fmt"] }
+clap = { version = "4.6.4", features = ["derive", "env"] }
+notify-rust = "4.18"
+
+[profile.release]
+codegen-units = 1
+lto = "fat"
+strip = "symbols"
+panic = "abort"
